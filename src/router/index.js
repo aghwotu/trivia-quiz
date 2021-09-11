@@ -4,6 +4,7 @@ import Home from '../views/Home.vue';
 import Game from '../views/Game.vue';
 import HighScores from '../views/HighScores.vue';
 import End from '../views/End.vue';
+import Login from '../views/Login.vue';
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/end',
     name: 'End',
     component: End,
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
   },
   {
     path: '/about',
