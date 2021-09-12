@@ -17,9 +17,7 @@
           <p class="hud-prefix">
             Score
           </p>
-          <h1 class="hud-main-text" id="score">
-            0
-          </h1>
+          <h1 class="hud-main-text" id="score"> {{ score }}/1000 </h1>
         </div>
       </div>
       <h1 id="question">{{ currentQuestion }}</h1>
@@ -27,7 +25,7 @@
         class="choice-container"
         v-for="(answer, index) in incorrectAnswers"
         :key="index"
-        @click="getNextQuestion()"
+        @click="submitAnswer(answer, $event)"
       >
         <p class="choice-prefix">[{{ alphabets[index] }}]</p>
         <p class="choice-text" :data-number="index + 1">{{ answer }}</p>
@@ -51,11 +49,12 @@
         // scoreText: '',
         currentQuestion: '',
         // acceptingAnswers: true,
-        // score: 0,
+        score: 0,
         questionCounter: 0,
         progressBarWidth: '',
         correctAnswerIndex: 0,
         progressBarCounter: 1,
+        classToApply: '',
       };
     },
     methods: {
@@ -84,22 +83,32 @@
           })
           .finally(() => {});
       },
-      startGame() {
-        this.questionCounter = 0;
-        this.score = 0;
-        this.availableQuestions = [...this.questions];
-      },
-      getNextQuestion() {
-        this.progressBarCounter++;
-        this.questionCounter++;
-        this.currentQuestion = this.questions[this.questionCounter].question;
-        this.incorrectAnswers = this.questions[
-          this.questionCounter
-        ].incorrect_answers;
-        this.addCorrectAnswerToIncorrectAnswers();
-        this.progressBarWidth = `${(this.progressBarCounter /
-          this.numberOfQuestions) *
-          100}%`;
+      submitAnswer(selectedAnswer, event) {
+        this.score =
+          selectedAnswer == this.correctAnswer ? this.score + 100 : this.score;
+        let classToApply =
+          selectedAnswer == this.correctAnswer ? 'correct' : 'incorrect';
+        event.path[1].classList.add(classToApply);
+
+        setTimeout(() => {
+          this.progressBarCounter++;
+          this.questionCounter++;
+
+          this.currentQuestion = this.questions[this.questionCounter].question;
+          this.correctAnswer = this.questions[
+            this.questionCounter
+          ].correct_answer;
+          this.incorrectAnswers = this.questions[
+            this.questionCounter
+          ].incorrect_answers;
+          this.progressBarWidth = `${(this.progressBarCounter /
+            this.numberOfQuestions) *
+            100}%`;
+
+          this.addCorrectAnswerToIncorrectAnswers();
+
+          event.path[1].classList.remove(classToApply);
+        }, 1000);
       },
       gradeAnswer() {},
       addCorrectAnswerToIncorrectAnswers() {
@@ -114,6 +123,7 @@
     created() {
       this.getQuestions();
     },
+    computed: {},
   };
 </script>
 
