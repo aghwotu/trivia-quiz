@@ -3,14 +3,9 @@
     <div id="game" class="justify-center flex-column">
       <div id="hud">
         <div class="hud-item">
-          <p id="progressText" class="hud-prefix">
-            Question {{ questionCounter + 1 }} of {{ numberOfQuestions }}
-          </p>
+          <p id="progressText" class="hud-prefix"> Question {{ questionCounter + 1 }} of {{ numberOfQuestions }} </p>
           <div id="progressBar">
-            <div
-              id="progressBarFull"
-              :style="{ width: progressBarWidth }"
-            ></div>
+            <div id="progressBarFull" :style="{ width: progressBarWidth }"></div>
           </div>
         </div>
         <div class="hud-item">
@@ -20,7 +15,7 @@
           <h1 class="hud-main-text" id="score"> {{ score }}/1000 </h1>
         </div>
       </div>
-      <h1 id="question">{{ currentQuestion }}</h1>
+      <h1 id="question">{{ decodeHtml(currentQuestion) }}</h1>
       <div
         class="choice-container"
         v-for="(answer, index) in incorrectAnswers"
@@ -35,8 +30,9 @@
 </template>
 
 <script>
-  import { getCall } from '../services/api';
+  import { getCall } from '../services/http';
   import { BASE_URL } from '../config/endpoints';
+  import he from 'he';
 
   export default {
     data: () => {
@@ -57,26 +53,22 @@
         classToApply: '',
       };
     },
+    created() {
+      this.getQuestions();
+    },
+    computed: {},
     methods: {
       getQuestions() {
         getCall(BASE_URL)
           .then((response) => {
             this.questions = response.data.results;
-            this.currentQuestion = this.questions[
-              this.questionCounter
-            ].question;
+            this.currentQuestion = this.questions[this.questionCounter].question;
             this.numberOfQuestions = this.questions.length;
-            this.correctAnswer = this.questions[
-              this.questionCounter
-            ].correct_answer;
-            this.incorrectAnswers = this.questions[
-              this.questionCounter
-            ].incorrect_answers;
+            this.correctAnswer = this.questions[this.questionCounter].correct_answer;
+            this.incorrectAnswers = this.questions[this.questionCounter].incorrect_answers;
 
             this.addCorrectAnswerToIncorrectAnswers();
-            this.progressBarWidth = `${(this.progressBarCounter /
-              this.numberOfQuestions) *
-              100}%`;
+            this.progressBarWidth = `${(this.progressBarCounter / this.numberOfQuestions) * 100}%`;
           })
           .catch(() => {
             // console.log(error.message);
@@ -84,10 +76,8 @@
           .finally(() => {});
       },
       submitAnswer(selectedAnswer, event) {
-        this.score =
-          selectedAnswer == this.correctAnswer ? this.score + 100 : this.score;
-        let classToApply =
-          selectedAnswer == this.correctAnswer ? 'correct' : 'incorrect';
+        this.score = selectedAnswer == this.correctAnswer ? this.score + 100 : this.score;
+        let classToApply = selectedAnswer == this.correctAnswer ? 'correct' : 'incorrect';
         event.path[1].classList.add(classToApply);
 
         setTimeout(() => {
@@ -95,15 +85,9 @@
           this.questionCounter++;
 
           this.currentQuestion = this.questions[this.questionCounter].question;
-          this.correctAnswer = this.questions[
-            this.questionCounter
-          ].correct_answer;
-          this.incorrectAnswers = this.questions[
-            this.questionCounter
-          ].incorrect_answers;
-          this.progressBarWidth = `${(this.progressBarCounter /
-            this.numberOfQuestions) *
-            100}%`;
+          this.correctAnswer = this.questions[this.questionCounter].correct_answer;
+          this.incorrectAnswers = this.questions[this.questionCounter].incorrect_answers;
+          this.progressBarWidth = `${(this.progressBarCounter / this.numberOfQuestions) * 100}%`;
 
           this.addCorrectAnswerToIncorrectAnswers();
 
@@ -113,17 +97,12 @@
       gradeAnswer() {},
       addCorrectAnswerToIncorrectAnswers() {
         let correctAnswerIndex = Math.floor(Math.random() * 4);
-        this.incorrectAnswers.splice(
-          correctAnswerIndex,
-          0,
-          this.questions[this.questionCounter].correct_answer
-        );
+        this.incorrectAnswers.splice(correctAnswerIndex, 0, this.questions[this.questionCounter].correct_answer);
+      },
+      decodeHtml(stringWithHtml) {
+        return he.decode(stringWithHtml);
       },
     },
-    created() {
-      this.getQuestions();
-    },
-    computed: {},
   };
 </script>
 
