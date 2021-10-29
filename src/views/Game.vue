@@ -31,7 +31,8 @@
 
 <script>
   import { getCall } from '../services/http';
-  import { BASE_URL } from '../config/endpoints';
+  import { API_GET_TRIVIA } from '../config/endpoints';
+  import Categories from '../enums/categories';
   import he from 'he';
 
   export default {
@@ -59,7 +60,7 @@
     computed: {},
     methods: {
       getQuestions() {
-        getCall(BASE_URL)
+        getCall(API_GET_TRIVIA.REQUEST(10, Categories.ENTERTAINMENT_BOOKS.value))
           .then((response) => {
             this.questions = response.data.results;
             this.currentQuestion = this.questions[this.questionCounter].question;
