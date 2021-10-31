@@ -1,5 +1,7 @@
 # Vue.js Trivia app
 
+Work in progress
+
 - UI from [Brian Design](https://www.youtube.com/channel/UCsKsymTY_4BYR-wytLjex7A)
   - [Github: @briancodex](https://github.com/briancodex/quiz-app-js)
 
