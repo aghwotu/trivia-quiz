@@ -60,7 +60,7 @@
     computed: {},
     methods: {
       getQuestions() {
-        getCall(API_GET_TRIVIA.REQUEST(5, Categories.ENTERTAINMENT_BOOKS.value))
+        getCall(API_GET_TRIVIA.REQUEST(10, Categories.ENTERTAINMENT_BOOKS.value))
           .then((response) => {
             this.questions = response.data.results;
             this.currentQuestion = this.questions[this.questionCounter].question;
