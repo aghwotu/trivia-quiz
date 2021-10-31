@@ -60,7 +60,7 @@
     computed: {},
     methods: {
       getQuestions() {
-        getCall(API_GET_TRIVIA.REQUEST(10, Categories.ENTERTAINMENT_BOOKS.value))
+        getCall(API_GET_TRIVIA.REQUEST(5, Categories.ENTERTAINMENT_BOOKS.value))
           .then((response) => {
             this.questions = response.data.results;
             this.currentQuestion = this.questions[this.questionCounter].question;
@@ -85,8 +85,13 @@
           this.progressBarCounter++;
           this.questionCounter++;
 
-          this.currentQuestion = this.questions[this.questionCounter].question;
-          this.correctAnswer = this.questions[this.questionCounter].correct_answer;
+          // let endingIndex = this.numberOfQuestions - 1;
+          // if (this.questionCounter === endingIndex) {
+          //   this.$router.push({ name: 'End' });
+          // }
+
+          this.currentQuestion = this.decodeHtml(this.questions[this.questionCounter].question);
+          this.correctAnswer = this.decodeHtml(this.questions[this.questionCounter].correct_answer);
           this.incorrectAnswers = this.questions[this.questionCounter].incorrect_answers;
           this.progressBarWidth = `${(this.progressBarCounter / this.numberOfQuestions) * 100}%`;
 
